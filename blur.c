@@ -50,10 +50,10 @@ int main(int argc, char *argv[]) {
 		BMP bmp, blurbmp;
 
     bmpLoad(&bmp, input);
-    bmpPrint(&bmp);
+    //bmpPrint(&bmp);
 		blurbmp = bmp;
 		blur(&bmp, &blurbmp);
-    bmpPrint(&blurbmp);
+    //bmpPrint(&blurbmp);
     bmpSave(&blurbmp, output);
 
     return 0;
