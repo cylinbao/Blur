@@ -71,7 +71,7 @@ int bmpLoad(BMP *bmp, char *fileName) {
    bmp->fileSize = B2U32(header,2);
    bmp->dataOffset = B2U32(header,10);
    // InfoHeader
-   bmp->size = B2U32(info,0); assert(bmp->size==40);
+   bmp->size = B2U32(info,0); //assert(bmp->size==40);
    bmp->width = B2U32(info,4);
    bmp->height = B2U32(info,8);
    bmp->planes = B2U16(info,12); assert(bmp->planes==1);
@@ -136,13 +136,4 @@ int bmpSave(BMP *bmp, char *fileName) {
     fseek(file, bmp->dataOffset, SEEK_SET);
     fwrite(bmp->data, 1, DataSize(bmp), file);
     fclose(file);
-}
-
-int main(int argc, char *argv[]) {
-    BMP bmp;
-    bmpLoad(&bmp, argv[1]);
-    bmpPrint(&bmp);
-    //bmpSetBox(&bmp, 0, 0, 20, 20, 0x66, 0x33, 0x99);
-    bmpSave(&bmp, argv[2]);
-    return 0;
 }
