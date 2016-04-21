@@ -23,17 +23,18 @@ void blur(BMP *bmp, BMP *blurbmp)
 	Pixel *pixel;
 
 	for(i = 0; i < bmp->height; i++){
-		for(j = 0; j < bmp->width; j++){
+		for(j = 0; j <= i; j++){
 			acc[0] = 0; acc[1] = 0; acc[2] = 0;
 			weight = max_weight;
       for(k = 0; k < kern_size; k++){                                          
         for(l = 0; l < kern_size; l++){                                        
-          idx[1] = j - kern_len + l;                                             
-          idx[2] = i - kern_len + k;                                             
-					idx[0] = idx[2]*bmp->width + idx[1];
+					idx[0] = j*bmp->width + i - j;
+          idx[1] = idx[0]%bmp->width - kern_len + l;
+          idx[2] = idx[0]/bmp->width - kern_len + k;
           if((idx[1] >= 0) && (idx[2] >=0) && 
 						(idx[1] < bmp->width) && (idx[2] < bmp->height)){
-            pixel = (Pixel *) &bmp->data[idx[0]*sizeof(Pixel)];
+            pixel = (Pixel *) &bmp->data[(idx[2]*bmp->width + idx[1])
+																				 *sizeof(Pixel)];
 						acc[0] += gaussian_filter[k][l] * (pixel->R - 0);
 						acc[1] += gaussian_filter[k][l] * (pixel->G - 0);
 						acc[2] += gaussian_filter[k][l] * (pixel->B - 0);
@@ -42,7 +43,31 @@ void blur(BMP *bmp, BMP *blurbmp)
 						weight -= gaussian_filter[k][l];
         }                                                                        
       }		
-			pixel = (Pixel *) &blurbmp->data[(i*blurbmp->width + j)*sizeof(Pixel)];
+			pixel = (Pixel *) &blurbmp->data[idx[0]*sizeof(Pixel)];
+			pixel->R = acc[0]/weight;
+			pixel->G = acc[1]/weight;
+			pixel->B = acc[2]/weight;
+		}
+	}
+	for(i = 0; i < bmp->height-1; i++){
+		for(j = 0; j <= i; j++){
+			acc[0] = 0; acc[1] = 0; acc[2] = 0;
+      for(k = 0; k < kern_size; k++){                                          
+        for(l = 0; l < kern_size; l++){                                        
+					idx[0] = (bmp->height - j)*bmp->width + bmp->width - i + j;
+          idx[1] = idx[0]%bmp->width - kern_len + l;
+          idx[2] = idx[0]/bmp->width - kern_len + k;
+          if((idx[1] >= 0) && (idx[2] >=0) && 
+						(idx[1] < bmp->width) && (idx[2] < bmp->height)){
+            pixel = (Pixel *) &bmp->data[(idx[2]*bmp->width + idx[1])
+																				 *sizeof(Pixel)];
+						acc[0] += gaussian_filter[k][l] * (pixel->R - 0);
+						acc[1] += gaussian_filter[k][l] * (pixel->G - 0);
+						acc[2] += gaussian_filter[k][l] * (pixel->B - 0);
+					}
+        }                                                                        
+      }		
+			pixel = (Pixel *) &blurbmp->data[idx[0]*sizeof(Pixel)];
 			pixel->R = acc[0]/weight;
 			pixel->G = acc[1]/weight;
 			pixel->B = acc[2]/weight;
