@@ -71,7 +71,8 @@ int bmpLoad(BMP *bmp, char *fileName) {
    bmp->fileSize = B2U32(header,2);
    bmp->dataOffset = B2U32(header,10);
    // InfoHeader
-   bmp->size = B2U32(info,0); //assert(bmp->size==40);
+   bmp->size = B2U32(info,0); assert(bmp->size==40);
+	 //bmp->size = 40;
    bmp->width = B2U32(info,4);
    bmp->height = B2U32(info,8);
    bmp->planes = B2U16(info,12); assert(bmp->planes==1);
