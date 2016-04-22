@@ -52,6 +52,7 @@ void blur(BMP *bmp, BMP *blurbmp)
 	for(i = 0; i < bmp->height-1; i++){
 		for(j = 0; j <= i; j++){
 			acc[0] = 0; acc[1] = 0; acc[2] = 0;
+			weight = max_weight;
       for(k = 0; k < kern_size; k++){                                          
         for(l = 0; l < kern_size; l++){                                        
 					idx[0] = (bmp->height - j)*bmp->width + bmp->width - i + j;
@@ -65,6 +66,8 @@ void blur(BMP *bmp, BMP *blurbmp)
 						acc[1] += gaussian_filter[k][l] * (pixel->G - 0);
 						acc[2] += gaussian_filter[k][l] * (pixel->B - 0);
 					}
+					else
+						weight -= gaussian_filter[k][l];
         }                                                                        
       }		
 			pixel = (Pixel *) &blurbmp->data[idx[0]*sizeof(Pixel)];
