@@ -13,8 +13,8 @@ int gaussian_filter[5][5] = {
 
 void blur(BMP *bmp, BMP *blurbmp)
 {
-	int i, j, k, l, idx1, idx2, weight;
-	int acc[3];
+	int i, j, k, l, weight;
+	int acc[3], idx[3];
 	int kern_len = kern_size/2;
 	Pixel *pixel;
 
@@ -24,11 +24,12 @@ void blur(BMP *bmp, BMP *blurbmp)
 			weight = max_weight;
       for(k = 0; k < kern_size; k++){                                          
         for(l = 0; l < kern_size; l++){                                        
-          idx1 = j - kern_len + l;                                             
-          idx2 = i - kern_len + k;                                             
-          if((idx1 >= 0) && (idx2 >=0) && 
-						(idx1 < bmp->width) && (idx2 < bmp->height)){
-            pixel = (Pixel *) &bmp->data[(idx2*bmp->width + idx1)*sizeof(Pixel)];
+          idx[1] = j - kern_len + l;                                             
+          idx[2] = i - kern_len + k;                                             
+					idx[0] = idx[2]*bmp->width + idx[1];
+          if((idx[1] >= 0) && (idx[2] >=0) && 
+						(idx[1] < bmp->width) && (idx[2] < bmp->height)){
+            pixel = (Pixel *) &bmp->data[idx[0]*sizeof(Pixel)];
 						acc[0] += gaussian_filter[k][l] * (pixel->R - 0);
 						acc[1] += gaussian_filter[k][l] * (pixel->G - 0);
 						acc[2] += gaussian_filter[k][l] * (pixel->B - 0);
